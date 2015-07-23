@@ -49,6 +49,14 @@ class VeraClient:
                  'newTargetValue='+str(state)]
         url = self.BuildUrl(pairs)
         d = getPage(url)
+	
+	#-----------------------------------------------------------------------------
+    def TogglePower(self, devId):
+        pairs = ['DeviceNum='+ str(devId),
+                 'serviceId=urn:micasaverde-com:serviceId:HaDevice1',
+                 'action=ToggleState']
+        url = self.BuildUrl(pairs)
+        d = getPage(url)
 
     #-----------------------------------------------------------------------------
     def DimmableLight(self, devId, level):
