@@ -8,8 +8,8 @@ from VeraAsyncDispatcher import *
 
 eg.RegisterPlugin(
     name = "MiCasaVerde Vera",
-    author = "Rick Naething",
-    version = "0.0.4",
+    author = "Created by Rick Naething / Last Updated by Brandon Simonsen (m19bradon)",
+    version = "0.0.5",
     kind = "other",
     description = "Control Over Devices on Vera"
 )
@@ -19,6 +19,7 @@ class Vera(eg.PluginBase):
 
     def __init__(self):
         self.AddAction(SetSwitchPower)
+        self.AddAction(TogglePower)
         self.AddAction(SetDimming)
         self.AddAction(RunScene)
         self.HTTP_API   = VERA_HTTP_API()
@@ -161,3 +162,25 @@ class SetSwitchPower(eg.ActionBase):
         panel.AddLine("Value", functionCtrl)
         while panel.Affirmed():
             panel.SetResult(deviceCtrl.GetValue(), functionCtrl.GetSelection())
+
+#-----------------------------------------------------------------------------
+#This class should toggle any binary zwave device.
+class TogglePower(eg.ActionBase):
+    name = "Toggle Binary Power"
+    description = "Toggles the power on and off"
+    
+    def __call__(self, device):
+        url = "/data_request?id=lu_action&DeviceNum="
+        url += str(device)
+        url += "&serviceId=urn:micasaverde-com:serviceId:HaDevice1&action=ToggleState"
+        responce = self.plugin.HTTP_API.send(url)
+
+    def GetLabel(self, device):
+        return "Toggle Binary Power Device: " + str(device)
+
+    def Configure(self, device=1):
+        panel = eg.ConfigPanel()
+        deviceCtrl = panel.SpinIntCtrl(device)
+        panel.AddLine("Set Device", deviceCtrl)
+        while panel.Affirmed():
+            panel.SetResult(deviceCtrl.GetValue())
